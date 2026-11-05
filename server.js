@@ -14,21 +14,22 @@ app.use(cors());
 app.use(express.json());
 
 // CONEXIÓN MYSQL
-const db = mysql.createConnection({
+const db = mysql.createPool({
     host: process.env.DB_HOST || 'localhost',
     port: Number(process.env.DB_PORT || 3306),
-    user: process.env.DB_USER || 'alumno_motor',
-    password: process.env.DB_PASSWORD || '',
+    user: process.env.DB_USER || 'root',
+    password: process.env.DB_PASSWORD || 'root',
     database: process.env.DB_NAME || 'motorstore'
 });
 
-db.connect((err) => {
+db.getConnection((err, conexion) => {
     if (err) {
         console.error('Error al conectar a MySQL:', err);
     } else {
         console.log(
             'Conectado exitosamente a la base de datos motorstore'
         );
+        conexion.release();
     }
 });
 
