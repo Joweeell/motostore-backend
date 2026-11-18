@@ -2,11 +2,15 @@
 package cl.duoc.motostore.controller;
 
 import cl.duoc.motostore.dto.ProductoDTO;
+import cl.duoc.motostore.dto.ProductoRequest;
 import cl.duoc.motostore.service.ProductoService;
+
+import jakarta.validation.Valid;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -31,7 +35,7 @@ public class ProductoController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ProductoDTO> buscarPorId(
-            @PathVariable Integer id) {
+            @PathVariable("id") Integer id) {
 
         return ResponseEntity.ok(
                 productoService.buscarPorId(id)
@@ -40,7 +44,7 @@ public class ProductoController {
 
     @GetMapping("/categoria/{id}")
     public ResponseEntity<List<ProductoDTO>> buscarPorCategoria(
-            @PathVariable Integer id) {
+            @PathVariable("id") Integer id) {
 
         return ResponseEntity.ok(
                 productoService.buscarPorCategoria(id)
@@ -49,7 +53,7 @@ public class ProductoController {
 
     @GetMapping("/buscar")
     public ResponseEntity<List<ProductoDTO>> buscarPorNombre(
-            @RequestParam String nombre) {
+            @RequestParam("nombre") String nombre) {
 
         return ResponseEntity.ok(
                 productoService.buscarPorNombre(nombre)
@@ -70,5 +74,37 @@ public class ProductoController {
         return ResponseEntity.ok(
                 productoService.listarOfertas()
         );
+    }
+
+    @PostMapping
+    public ResponseEntity<ProductoDTO> crear(
+            @Valid @RequestBody ProductoRequest request) {
+
+        ProductoDTO creado = productoService.crear(request);
+
+        return ResponseEntity
+                .created(URI.create(
+                        "/api/v1/productos/" + creado.idProducto()
+                ))
+                .body(creado);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ProductoDTO> actualizar(
+            @PathVariable("id") Integer id,
+            @Valid @RequestBody ProductoRequest request) {
+
+        return ResponseEntity.ok(
+                productoService.actualizar(id, request)
+        );
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminar(
+            @PathVariable("id") Integer id) {
+
+        productoService.eliminar(id);
+
+        return ResponseEntity.noContent().build();
     }
 }

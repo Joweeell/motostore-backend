@@ -12,10 +12,15 @@ public interface CategoriaRepository
         extends JpaRepository<Categoria, Integer> {
 
     Optional<Categoria> findByNombreCategoria(
-        String nombreCategoria
+            String nombreCategoria
     );
 
     boolean existsByNombreCategoriaIgnoreCase(
-        String nombreCategoria
+            String nombreCategoria
+    );
+
+    boolean existsByNombreCategoriaIgnoreCaseAndIdCategoriaNot(
+            String nombreCategoria,
+            Integer idCategoria
     );
 }
