@@ -116,12 +116,14 @@ public class SecurityConfig {
                 .dispatcherTypeMatchers(DispatcherType.ERROR)
                 .permitAll()
 
+                // Registro e inicio de sesion
                 .requestMatchers(
                         HttpMethod.POST,
                         "/api/v1/auth/registro",
                         "/api/v1/auth/login"
                 ).permitAll()
 
+                // Catalogo publico
                 .requestMatchers(
                         HttpMethod.GET,
                         "/api/v1/productos",
@@ -130,6 +132,7 @@ public class SecurityConfig {
                         "/api/v1/categorias/**"
                 ).permitAll()
 
+                // Consultar sesion autenticada
                 .requestMatchers(
                         HttpMethod.GET,
                         "/api/v1/auth/me"
@@ -137,6 +140,34 @@ public class SecurityConfig {
                         "ADMIN", "VENDEDOR", "CLIENTE"
                 )
 
+                // Crear pedidos: solamente clientes
+                .requestMatchers(
+                        HttpMethod.POST,
+                        "/api/v1/pedidos"
+                ).hasRole("CLIENTE")
+
+                // Historial y detalle de pedidos propios
+                .requestMatchers(
+                        HttpMethod.GET,
+                        "/api/v1/pedidos/mis-pedidos",
+                        "/api/v1/pedidos/mis-pedidos/**"
+                ).hasRole("CLIENTE")
+
+                // Consultar pedidos: administrador y vendedor
+                .requestMatchers(
+                        HttpMethod.GET,
+                        "/api/v1/pedidos",
+                        "/api/v1/pedidos/*"
+                ).hasAnyRole("ADMIN", "VENDEDOR")
+
+                // Confirmar pagos y cancelar pedidos
+                // Solamente administrador
+                .requestMatchers(
+                        HttpMethod.PUT,
+                        "/api/v1/pedidos/*/estado"
+                ).hasRole("ADMIN")
+
+                // Administracion de productos y categorias
                 .requestMatchers(
                         "/api/v1/productos",
                         "/api/v1/productos/**",
@@ -144,6 +175,7 @@ public class SecurityConfig {
                         "/api/v1/categorias/**"
                 ).hasRole("ADMIN")
 
+                // Bloquear cualquier endpoint no autorizado
                 .anyRequest().denyAll()
             )
 

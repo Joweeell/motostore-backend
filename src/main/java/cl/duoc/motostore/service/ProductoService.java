@@ -1,4 +1,3 @@
-
 package cl.duoc.motostore.service;
 
 import cl.duoc.motostore.dto.ProductoDTO;
@@ -38,6 +37,7 @@ public class ProductoService {
         this.categoriaRepository = categoriaRepository;
     }
 
+    // Listar todos los productos
     public List<ProductoDTO> listarTodos() {
 
         return productoRepository.findAll()
@@ -46,11 +46,13 @@ public class ProductoService {
                 .toList();
     }
 
+    // Buscar producto por ID
     public ProductoDTO buscarPorId(Integer id) {
 
         return convertirDTO(obtenerProducto(id));
     }
 
+    // Buscar productos por categoria
     public List<ProductoDTO> buscarPorCategoria(Integer id) {
 
         return productoRepository
@@ -60,6 +62,7 @@ public class ProductoService {
                 .toList();
     }
 
+    // Buscar productos por nombre
     public List<ProductoDTO> buscarPorNombre(String nombre) {
 
         return productoRepository
@@ -69,6 +72,7 @@ public class ProductoService {
                 .toList();
     }
 
+    // Listar productos con stock disponible
     public List<ProductoDTO> listarDisponibles() {
 
         return productoRepository
@@ -78,6 +82,7 @@ public class ProductoService {
                 .toList();
     }
 
+    // Listar productos en oferta
     public List<ProductoDTO> listarOfertas() {
 
         return productoRepository
@@ -87,6 +92,7 @@ public class ProductoService {
                 .toList();
     }
 
+    // Crear producto
     @Transactional
     public ProductoDTO crear(ProductoRequest request) {
 
@@ -102,12 +108,13 @@ public class ProductoService {
         return convertirDTO(guardado);
     }
 
+    // Actualizar producto con bloqueo de registro
     @Transactional
     public ProductoDTO actualizar(
             Integer id,
             ProductoRequest request) {
 
-        Producto producto = obtenerProducto(id);
+        Producto producto = obtenerProductoConBloqueo(id);
 
         asignarDatos(producto, request);
 
@@ -116,12 +123,14 @@ public class ProductoService {
         );
     }
 
+    // Eliminar producto con bloqueo de registro
     @Transactional
     public void eliminar(Integer id) {
 
-        Producto producto = obtenerProducto(id);
+        Producto producto = obtenerProductoConBloqueo(id);
 
         try {
+
             productoRepository.delete(producto);
             productoRepository.flush();
 
@@ -134,6 +143,7 @@ public class ProductoService {
         }
     }
 
+    // Obtener producto para operaciones de lectura
     private Producto obtenerProducto(Integer id) {
 
         return productoRepository.findById(id)
@@ -143,6 +153,18 @@ public class ProductoService {
                 ));
     }
 
+    // Obtener producto con bloqueo para operaciones de escritura
+    private Producto obtenerProductoConBloqueo(Integer id) {
+
+        return productoRepository
+                .buscarPorIdConBloqueo(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Producto no encontrado"
+                ));
+    }
+
+    // Validar y asignar los datos del producto
     private void asignarDatos(
             Producto producto,
             ProductoRequest request) {
@@ -165,9 +187,11 @@ public class ProductoService {
                 ));
 
         producto.setCategoria(categoria);
+
         producto.setNombreProducto(
                 request.nombreProducto().trim()
         );
+
         producto.setDescripcion(request.descripcion());
         producto.setPrecio(request.precio());
         producto.setPrecioOferta(request.precioOferta());
@@ -175,6 +199,7 @@ public class ProductoService {
         producto.setImagenUrl(request.imagenUrl());
     }
 
+    // Convertir entidad Producto a DTO
     private ProductoDTO convertirDTO(Producto producto) {
 
         Categoria categoria = producto.getCategoria();
