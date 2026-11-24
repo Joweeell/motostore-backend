@@ -1,3 +1,4 @@
+
 package cl.duoc.motostore.config;
 
 import jakarta.servlet.DispatcherType;
@@ -155,11 +156,11 @@ public class SecurityConfig {
                         "ADMIN", "VENDEDOR", "CLIENTE"
                 )
 
-                // Crear pedidos: solamente clientes
+                // Crear pedidos: clientes y administradores
                 .requestMatchers(
                         HttpMethod.POST,
                         "/api/v1/pedidos"
-                ).hasRole("CLIENTE")
+                ).hasAnyRole("CLIENTE", "ADMIN")
 
                 // Historial y detalle de pedidos propios
                 .requestMatchers(
