@@ -102,3 +102,13 @@ SHOW TABLES;
 SELECT * FROM roles;
 SELECT COUNT(*) AS total_categorias FROM categorias;
 SELECT COUNT(*) AS total_productos FROM productos;
+
+
+-- Configuración de usuario de base de datos y administrador por defecto
+CREATE USER IF NOT EXISTS 'motorstore_app'@'localhost' IDENTIFIED BY 'MotorStore123';
+GRANT ALL PRIVILEGES ON motorstore.* TO 'motorstore_app'@'localhost';
+FLUSH PRIVILEGES;
+
+INSERT IGNORE INTO usuarios (id_rol, nombre, apellido, email, password_hash)
+VALUES (1, 'Oswel', 'Andrade', 'admin@duoc.cl', '$2a$12$3TWw./Ft0Rk22QNj5e1cwuwjKwpIcC9e.eWLpm7X4dDrvIFGoxxXy');
+
