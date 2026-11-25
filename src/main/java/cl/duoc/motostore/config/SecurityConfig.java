@@ -1,4 +1,3 @@
-
 package cl.duoc.motostore.config;
 
 import jakarta.servlet.DispatcherType;
@@ -130,7 +129,8 @@ public class SecurityConfig {
                 .requestMatchers(
                         HttpMethod.POST,
                         "/api/v1/auth/registro",
-                        "/api/v1/auth/login"
+                        "/api/v1/auth/login",
+                        "/api/v1/auth/google"
                 ).permitAll()
 
                 // Catalogo publico
@@ -248,7 +248,7 @@ public class SecurityConfig {
                 "Content-Type"
         ));
 
-        config.setAllowCredentials(false);
+        config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source =
                 new UrlBasedCorsConfigurationSource();

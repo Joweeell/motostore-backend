@@ -54,6 +54,16 @@ public class UsuarioController {
                 authService.login(request)
         );
     }
+        @PostMapping("/google")
+    public ResponseEntity<Map<String, Object>> loginGoogle(
+            @RequestBody Map<String, String> body) {
+
+        String credential = body.get("credential");
+        return ResponseEntity.ok(
+                authService.loginConGoogle(credential)
+        );
+    }
+
 
     @GetMapping("/me")
     public ResponseEntity<Map<String, Object>> me(
